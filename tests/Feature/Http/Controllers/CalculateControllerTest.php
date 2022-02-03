@@ -17,7 +17,7 @@ class CalculateControllerTest extends TestCase
             'invoicesFile' => $this->getFile(),
         ]);
 
-        $response->assertViewIs('results');
+        $response->assertViewIs('pages.results');
         $response->assertSee('3718.32');
     }
 
@@ -31,7 +31,7 @@ class CalculateControllerTest extends TestCase
                 'invoicesFile' => $this->getFile(),
             ]);
 
-        $response->assertViewIs('results');
+        $response->assertViewIs('pages.results');
         $response->assertSee('1713.63');
         $response->assertSee('Vendor 1');
     }

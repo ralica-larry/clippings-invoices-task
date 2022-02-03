@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Validation\ValidationException;
 
-use function throw_if;
 
 class InvoicesData
 {
@@ -42,11 +41,16 @@ class InvoicesData
         }
 
         $result = $this->rows->map(function ($row) {
-            $convertedValue = ($row['currency'] === $this->outputCurrency) ?
-                (int) $row['total'] :
-                $this->convert($row);
 
-            return ((int) $row['type'] === 2) ? (-1) * $convertedValue : $convertedValue;
+            if ((int) $row['type'] !== 1) {
+                throw_if(
+                    empty($row['parent_document']) ||
+                    $this->rows->where('document_number', '=', $row['parent_document'])->isEmpty(),
+                    ValidationException::withMessages(['The parent number for document ' . $row['document_number'] . ' does not exist'])
+                );
+            }
+
+            return $this->convert($row);
         });
 
         return [
@@ -58,7 +62,11 @@ class InvoicesData
 
     private function convert($row)
     {
-        return $row['total'] * $this->currencyRates[$row['currency']] * $this->currencyRates[$this->outputCurrency];
+        $convertedValue = ($row['currency'] === $this->outputCurrency) ?
+            (int) $row['total'] :
+            $row['total'] * $this->currencyRates[$row['currency']] * $this->currencyRates[$this->outputCurrency];
+
+        return ((int) $row['type'] === 2) ? (-1) * $convertedValue : $convertedValue;
     }
 
 
