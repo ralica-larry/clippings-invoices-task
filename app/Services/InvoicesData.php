@@ -27,28 +27,18 @@ class InvoicesData
         $this->rows = $rows;
     }
 
-    public function calculate()
+    public function calculate(): array
     {
-        if ($this->vatNumber) {
-            $this->rows = $this->rows->where('vat_number', $this->vatNumber);
-
-            throw_if(
-                $this->rows->isEmpty(),
-                ValidationException::withMessages(['The Vat number does not exist'])
-            );
-
-            $company = $this->rows->first()['customer'];
-        }
+        $company = $this->filterVatNumber();
 
         $result = $this->rows->map(function ($row) {
 
-            if ((int) $row['type'] !== 1) {
-                throw_if(
-                    empty($row['parent_document']) ||
-                    $this->rows->where('document_number', '=', $row['parent_document'])->isEmpty(),
-                    ValidationException::withMessages(['The parent number for document ' . $row['document_number'] . ' does not exist'])
-                );
-            }
+            throw_if(
+                ((int) $row['type'] !== 1) &&
+                (empty($row['parent_document']) ||
+                $this->rows->where('document_number', '=', $row['parent_document'])->isEmpty()),
+                ValidationException::withMessages(['The parent number for document ' . $row['document_number'] . ' is not valid'])
+            );
 
             return $this->convert($row);
         });
@@ -58,6 +48,22 @@ class InvoicesData
             'company' => $company ?? '',
             'outputCurrency' => $this->outputCurrency
         ];
+    }
+
+    private function filterVatNumber()
+    {
+        if ($this->vatNumber) {
+            $this->rows = $this->rows->where('vat_number', $this->vatNumber);
+
+            throw_if(
+                $this->rows->isEmpty(),
+                ValidationException::withMessages(['The Vat number does not exist'])
+            );
+
+            return $this->rows->first()['customer'];
+        }
+
+        return '';
     }
 
     private function convert($row)
