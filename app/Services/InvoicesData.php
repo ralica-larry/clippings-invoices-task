@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Validation\ValidationException;
+
+use function throw_if;
+
 class InvoicesData
 {
     private $rows;
@@ -28,6 +32,11 @@ class InvoicesData
     {
         if ($this->vatNumber) {
             $this->rows = $this->rows->where('vat_number', $this->vatNumber);
+
+            throw_if(
+                $this->rows->isEmpty(),
+                ValidationException::withMessages(['The Vat number does not exist'])
+            );
 
             $company = $this->rows->first()['customer'];
         }

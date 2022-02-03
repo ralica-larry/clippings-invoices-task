@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Exception;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 
 class CalculateFormRequest extends FormRequest
@@ -19,10 +21,19 @@ class CalculateFormRequest extends FormRequest
 
             $input = explode(',', str_replace(' ', '', $validated['currencyRates']));
 
-            foreach ($input as $currency) {
-                $tempCurrency = explode(':', $currency);
-                $rates[$tempCurrency[0]] = $tempCurrency[1];
+            try {
+                foreach ($input as $currency) {
+                    $tempCurrency = explode(':', $currency);
+                    $rates[$tempCurrency[0]] = $tempCurrency[1];
+                }
+            } catch (Exception $exception) {
+                throw ValidationException::withMessages(['Currency rates not in valid format']);
             }
+
+            throw_unless(
+                isset($rates[$validated['outputCurrency']]),
+                ValidationException::withMessages(['Output currency do not have a rate'])
+            );
 
             $merged->put(
                 'currencyRates',
