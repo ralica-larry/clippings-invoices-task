@@ -34,8 +34,12 @@
                 <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
                     <div class="grid grid-cols-1">
                         <div class="p-6">
-                            Show results here:
-                            <diV>{{ $results }}</diV>
+                            <diV>
+                                Total: {{ $results['total'] }} {{$results['outputCurrency']}}
+                                @if(! empty($results['company']))
+                                    <span> for company: {{ $results['company'] }}</span>
+                                @endif
+                            </diV>
                         </div>
                     </div>
                 </div>

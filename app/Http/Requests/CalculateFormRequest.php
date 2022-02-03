@@ -14,9 +14,19 @@ class CalculateFormRequest extends FormRequest
         $merged = collect($validated);
 
         if ($this->filled('currencyRates')) {
+
+            $rates = [];
+
+            $input = explode(',', str_replace(' ', '', $validated['currencyRates']));
+
+            foreach ($input as $currency) {
+                $tempCurrency = explode(':', $currency);
+                $rates[$tempCurrency[0]] = $tempCurrency[1];
+            }
+
             $merged->put(
                 'currencyRates',
-                explode(',', str_replace(' ', '', $validated['currencyRates']))
+                $rates
             );
         }
 
