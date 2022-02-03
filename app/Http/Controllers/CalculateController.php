@@ -22,7 +22,7 @@ class CalculateController extends Controller
 
         $invoicesData->setData($rows);
 
-        return view('results', [
+        return view('pages/results', [
             'results' => $invoicesData->calculate(),
         ]);
     }
