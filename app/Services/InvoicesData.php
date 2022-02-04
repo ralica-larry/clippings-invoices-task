@@ -34,6 +34,12 @@ class InvoicesData
         $result = $this->rows->map(function ($row) {
 
             throw_if(
+                empty($this->currencyRates[$row['currency']]),
+                ValidationException::withMessages(['Currency ' . $row['currency'] . ' doesn\'t have a rate'])
+            );
+
+
+            throw_if(
                 ((int) $row['type'] !== 1) &&
                 (empty($row['parent_document']) ||
                 $this->rows->where('document_number', '=', $row['parent_document'])->isEmpty()),
