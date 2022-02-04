@@ -2,9 +2,8 @@
 
 ## Run
 
-- composer install
-- npm install
-- php artisan serve
+- git clone https://github.com/ralica-larry/clippings-invoices-task.git
+- docker-compose up
 
 
 ## License
