@@ -49,7 +49,7 @@ class InvoicesData
         });
 
         return [
-            'total' => round($result->sum(), 2),
+            'total' => round($result->sum() * (float) $this->currencyRates[$this->outputCurrency], 2),
             'company' => $company ?? '',
             'outputCurrency' => $this->outputCurrency
         ];

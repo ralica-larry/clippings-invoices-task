@@ -18,7 +18,7 @@ class CalculateControllerTest extends TestCase
         ]);
 
         $response->assertViewIs('pages.results');
-        $response->assertSee('4025.44');
+        $response->assertSee('3421.62');
     }
 
     public function test_success_with_filter()
@@ -32,7 +32,7 @@ class CalculateControllerTest extends TestCase
             ]);
 
         $response->assertViewIs('pages.results');
-        $response->assertSee('1900.88');
+        $response->assertSee('1615.75');
         $response->assertSee('Vendor 1');
     }
 
