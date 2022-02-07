@@ -12,27 +12,27 @@ class CalculateControllerTest extends TestCase
     {
         $response = $this->withHeaders(['CONTENT_TYPE' => 'multipart/form-data'])
             ->post('/', [
-            'currencyRates' => 'EUR:1, USD:0.987 , GBP:0.878',
+            'currencyRates' => 'EUR:1, USD: 1.14, GBP:0.85',
             'outputCurrency' => 'GBP',
             'invoicesFile' => $this->getFile(),
         ]);
 
         $response->assertViewIs('pages.results');
-        $response->assertSee('3718.32');
+        $response->assertSee('4025.44');
     }
 
     public function test_success_with_filter()
     {
         $response = $this->withHeaders(['CONTENT_TYPE' => 'multipart/form-data'])
             ->post('/', [
-                'currencyRates' => 'EUR:1, USD:0.987 , GBP:0.878',
+                'currencyRates' => 'EUR:1, USD: 1.14, GBP:0.85',
                 'outputCurrency' => 'GBP',
                 'vatNumber' => '123456789',
                 'invoicesFile' => $this->getFile(),
             ]);
 
         $response->assertViewIs('pages.results');
-        $response->assertSee('1713.63');
+        $response->assertSee('1900.88');
         $response->assertSee('Vendor 1');
     }
 
