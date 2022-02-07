@@ -38,7 +38,6 @@ class InvoicesData
                 ValidationException::withMessages(['Currency ' . $row['currency'] . ' doesn\'t have a rate'])
             );
 
-
             throw_if(
                 ((int) $row['type'] !== 1) &&
                 (empty($row['parent_document']) ||
@@ -76,7 +75,7 @@ class InvoicesData
     {
         $convertedValue = ($row['currency'] === $this->outputCurrency) ?
             (int) $row['total'] :
-            $row['total'] * $this->currencyRates[$row['currency']] * $this->currencyRates[$this->outputCurrency];
+            $row['total'] * (1 / $this->currencyRates[$row['currency']]);
 
         return ((int) $row['type'] === 2) ? (-1) * $convertedValue : $convertedValue;
     }
