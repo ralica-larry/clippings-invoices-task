@@ -49,7 +49,7 @@ class InvoicesData
         });
 
         return [
-            'total' => round($result->sum() * (float) $this->currencyRates[$this->outputCurrency], 2),
+            'total' => round($result->sum(), 2),
             'company' => $company ?? '',
             'outputCurrency' => $this->outputCurrency
         ];
@@ -75,7 +75,7 @@ class InvoicesData
     {
         $convertedValue = ($row['currency'] === $this->outputCurrency) ?
             (int) $row['total'] :
-            $row['total'] * (1 / $this->currencyRates[$row['currency']]);
+            $row['total'] * (1 / $this->currencyRates[$row['currency']]) * (float) $this->currencyRates[$this->outputCurrency];
 
         return ((int) $row['type'] === 2) ? (-1) * $convertedValue : $convertedValue;
     }
